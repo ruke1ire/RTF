@@ -16,6 +16,7 @@ pykeops # Only for S4D. If there are installation problems with pykeops==2.x, tr
 transformers # For some schedulers
 torchvision
 timm
+wheel
 
 # Dataset specific packages
 torchtext # LRA

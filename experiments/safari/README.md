@@ -9,15 +9,6 @@ Install fftconv with:
 cd csrc/fftconv && pip install .
 ```
 
-Download WikiText-103 dataset:
-```
-mkdir data
-cd data
-wget https://raw.githubusercontent.com/kimiyoung/transformer-xl/master/getdata.sh
-bash getdata.sh
-mv data/wikitext-103 wt103
-```
-
 ### Run Wikitext-103 Experiments
 
 ```
