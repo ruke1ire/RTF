@@ -1,4 +1,4 @@
-# Long Range Arena and Synthetics
+# Long Range Arena, Speech Commands, and Synthetics
 
 This directory was directly adapted from the [S4 repository](https://github.com/state-spaces/s4). For detailed explanation on the setup of the python3 environment, datasets, and custom CUDA kernels (for S4), please refer to the original repository.
 

@@ -3,19 +3,19 @@ This repository contains the official implementation of RTF state-space model.
 
 ## Repository Structure
 
-- `rtf.py` contains the standalone RTF implementation.
+- [`rtf.py`](rtf.py) contains the standalone RTF implementation.
 - Experiemnts are located in `experiments`.
-	- `experiments/safari`: Wikitext103 language modeling experiment. 
-	- `experiments/state-spaces`: Long Range Arena (LRA), synthetic memory tasks (*Copying* and *Delay*), Speech Commands. 
-- Each experimental framework implements a wrap of the standalone RTF in `rtf.py`.
-	- Wrapper for `state-spaces`: `experiments/state-spaces/src/models/sequence/kernels/rtf_wrapper.py`
-	- Wrapper for `safari`: `experiments/safari/src/models/sequence/ssm/rtf_wrapper.py`
+	- [`experiments/safari`](experiments/safari): Wikitext103 language modeling experiment. 
+	- [`experiments/state-spaces`](experiments/state-spaces): Long Range Arena (LRA), synthetic memory tasks (*Copying* and *Delay*), Speech Commands. 
+- For each experimental framework, we implement a wrap of the standalone RTF (`rtf.py`).
+	- Wrapper for `state-spaces`: [`experiments/state-spaces/src/models/sequence/kernels/rtf_wrapper.py`](experiments/state-spaces/src/models/sequence/kernels/rtf_wrapper.py)
+	- Wrapper for `safari`: [`experiments/safari/src/models/sequence/ssm/rtf_wrapper.py`](experiments/safari/src/models/sequence/ssm/rtf_wrapper.py)
 
 ## Setup and Usage Guides
 
 Experiment-specific setup and usage guides:
-- `state-spaces`: `expertiments/state-spaces/README.md`
-- `safari`: `experiments/safari/README.md`
+- `state-spaces`: [`experiments/state-spaces/README.md`](experiments/state-spaces/README.md)
+- `safari`: [`experiments/safari/README.md`](experiments/safari/README.md)
 
 Setup for standalone rtf.py:
 ```
