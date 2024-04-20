@@ -1,0 +1,30 @@
+numpy
+scipy
+pandas
+scikit-learn
+matplotlib
+tqdm
+rich
+torchtext
+# torchvision
+pytorch-lightning==1.9.3
+hydra-core
+omegaconf
+wandb
+einops
+#cmake # For pykeops support
+#pykeops # If there are installation problems with pykeops==2.x, try pykeops==1.5
+transformers # For some schedulers
+opt_einsum
+
+# Model specific packges
+# pytorch-fast-transformers # for Performer
+
+# Dataset specific packages
+datasets # LRA
+sktime # BIDMC
+scikit-learn # Impedance
+numba # Impedance
+gluonts # Monash
+timm==0.5.4 # ImageNet
+deepspeed

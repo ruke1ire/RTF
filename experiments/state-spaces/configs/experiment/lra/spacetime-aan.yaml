@@ -1,0 +1,46 @@
+# @package _global_
+defaults:
+  - /pipeline: aan
+  - /model: spacetime
+  - override /scheduler: cosine_warmup
+
+decoder:
+  mode: pool
+
+model:
+  dropout: 0.
+  n_layers: 6
+  prenorm: true
+  d_model: 256
+  norm: batch
+  layer:
+    norm_order: 1
+    #model_dim: 1
+    n_kernels: 1 # 1 for n_ssm = 1, it's not exactly the same as n_ssm = 1 though, since this weight ties both  numerator and denominator, whereas S4 and RTF only weight ties the denominator
+    kernel_dim: 4 # order
+    kernel_repeat: 1
+    head_dim: 1
+    init_kwargs: {}
+    final_act: glu
+    activation: gelu
+
+loader:
+  batch_size: 64 #28
+
+optimizer:
+  lr: 0.007
+  weight_decay: 0.05
+
+scheduler:
+  num_training_steps: 50000 # 114285 # 20 epochs
+  num_warmup_steps: 5000 # 11400
+
+trainer:
+  max_epochs: 20
+
+train:
+  seed: 3333
+  interval: step
+
+wandb:
+  group: spacetime

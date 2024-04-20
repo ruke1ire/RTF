@@ -1,0 +1,41 @@
+# @package _global_
+defaults:
+  - /pipeline: pathx
+  - /model: rtf
+  - override /scheduler: cosine_warmup
+
+scheduler:
+  num_training_steps: 500000 # 50 epochs
+  num_warmup_steps: 50000
+
+model:
+  dropout: 0.1
+  n_layers: 6
+  prenorm: true
+  d_model: 256
+  norm: batch
+  layer:
+    dropout: 0.0
+    state_size: 2048
+    bidirectional: true
+    num_a: null
+    lr: 0.001
+    wd: 0.0
+    activation: gelu
+
+loader:
+  batch_size: 16
+
+optimizer:
+  lr: 0.001
+  weight_decay: 0.025
+
+trainer:
+  max_epochs: 50
+
+train:
+  seed: 3333
+  interval: step # For cosine scheduler
+
+wandb:
+  group: rtf

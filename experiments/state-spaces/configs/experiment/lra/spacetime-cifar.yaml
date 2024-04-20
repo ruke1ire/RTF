@@ -1,0 +1,46 @@
+# @package _global_
+defaults:
+  - /pipeline: cifar
+  - /model: spacetime
+  - override /scheduler: cosine_warmup
+
+model:
+  dropout: 0.1
+  tie_dropout: true
+  n_layers: 6
+  d_model: 512
+  prenorm: false
+  norm: batch
+  layer:
+    dropout: 0.1
+    norm_order: 1
+    activation: gelu
+    #model_dim: 1
+    n_kernels: ${..d_model} # 1 for n_ssm = 1, it's not exactly the same as n_ssm = 1 though, since this weight ties both  numerator and denominator, whereas S4 and RTF only weight ties the denominator
+    kernel_dim: 64 # order
+    kernel_repeat: 1
+    head_dim: 1
+    init_kwargs: {}
+
+dataset:
+  grayscale: true
+
+loader:
+  batch_size: 50
+
+optimizer:
+  lr: 0.007
+  weight_decay: 0.05
+
+trainer:
+  max_epochs: 200
+
+scheduler:
+  num_training_steps: 180000  # 200 epochs
+  num_warmup_steps: 18000
+
+train:
+  seed: 2222
+
+wandb:
+  group: spacetime

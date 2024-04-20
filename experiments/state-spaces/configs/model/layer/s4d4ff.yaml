@@ -1,0 +1,20 @@
+- _name_: s4
+  l_max: ${dataset.__l_max}
+  final_act: glu
+  dropout: ${...dropout} # Same as null
+  lr: ${optimizer.lr}
+  n_ssm: 1
+  mode: s4d
+  d_state: 4
+- _name_: s4
+  l_max: ${dataset.__l_max}
+  final_act: glu
+  dropout: ${...dropout} # Same as null
+  lr: ${optimizer.lr}
+  n_ssm: 1
+  mode: s4d
+  d_state: 4
+- _name_: ffn
+  expand: 4
+  activation: gelu
+  dropout: ${...dropout} # Same as null

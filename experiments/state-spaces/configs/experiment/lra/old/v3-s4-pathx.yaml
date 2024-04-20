@@ -1,0 +1,42 @@
+# @package _global_
+defaults:
+  - /pipeline: pathx
+  - /model: s4
+  - override /scheduler: cosine_warmup
+
+scheduler:
+  num_training_steps: 500000 # 50 epochs
+  # The original S4D/HTTYH papers used 1 epoch warmup
+  # This seems to be better
+  num_warmup_steps: 50000 # 5 epoch
+
+model:
+  dropout: 0.
+  n_layers: 6
+  prenorm: true
+  d_model: 256
+  norm: batch
+  layer:
+    d_state: 64
+    lr: 0.0005
+    dt_min: 0.0001
+    dt_max: 0.1
+    init: legs
+    bidirectional: true
+    final_act: glu
+    n_ssm: null
+
+loader:
+  batch_size: 16
+
+optimizer:
+  # The original S4D/HTTYH papers use lr=5e-4
+  lr: 0.001
+  weight_decay: 0.05
+
+trainer:
+  max_epochs: 50
+
+train:
+  seed: 2222
+  interval: step # For cosine scheduler

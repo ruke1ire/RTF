@@ -1,0 +1,7 @@
+defaults:
+  - base
+  - override layer: rtf
+
+transposed: false
+tie_dropout: true
+

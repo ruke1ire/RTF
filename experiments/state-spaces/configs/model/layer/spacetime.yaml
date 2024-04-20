@@ -1,0 +1,17 @@
+_name_: s4
+bottleneck: null # 4 for GSS
+gate: null # 4 for GSS
+gate_act: id # 4 for GSS
+mult_act: null
+final_act: glu # Final activation after FF layer; new name for 'postact'
+postact: null  # Deprecated for 'final_act'
+initializer: null
+weight_norm: false
+transposed: false
+custom_layer: "spacetime"
+# # Kernel arguments
+norm_order: 1
+#model_dim: 1
+n_kernels: 1
+kernel_dim: 64
+kernel_repeat: 1

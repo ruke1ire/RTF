@@ -1,0 +1,21 @@
+_name_: s4
+bottleneck: null # 4 for GSS
+gate: null # 4 for GSS
+gate_act: id # 4 for GSS
+mult_act: null
+final_act: glu # Final activation after FF layer; new name for 'postact'
+postact: null  # Deprecated for 'final_act'
+initializer: null
+weight_norm: false
+transposed: false
+# RTF specific arguments
+custom_layer: "rtf"
+state_size: 64
+trunc_len: ${oc.select:dataset.__l_max,null} # Grab dataset length if exists, otherwise set to 1 and kernel will automatically res
+num_a: null
+dropout: 0.0
+bidirectional: false
+flash_fft_conv: false
+activation: "gelu"
+lr: null
+wd: null

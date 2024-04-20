@@ -1,0 +1,41 @@
+# @package _global_
+defaults:
+  - /pipeline: listops
+  - /model: rtf
+  - override /scheduler: cosine_warmup
+
+model:
+  dropout: 0.0
+  n_layers: 6
+  d_model: 256
+  prenorm: false
+  norm: batch
+  layer:
+    state_size: 4
+    trunc_len: 2048
+    bidirectional: true
+    num_a: 1
+    activation: gelu
+
+decoder:
+  mode: pool
+
+loader:
+  batch_size: 32
+
+optimizer:
+  lr: 0.002
+  weight_decay: 0.07
+
+scheduler:
+  num_training_steps: 120000
+  num_warmup_steps: 12000
+
+trainer:
+  max_epochs: 40
+
+train:
+  seed: 3333
+
+wandb:
+  group: rtf

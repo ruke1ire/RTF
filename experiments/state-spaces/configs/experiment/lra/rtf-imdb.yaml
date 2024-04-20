@@ -1,0 +1,48 @@
+# @package _global_
+defaults:
+  - /pipeline: imdb
+  - /model: rtf
+  - override /scheduler: cosine_warmup
+
+decoder:
+  mode: pool
+
+model:
+  dropout: 0.1
+  n_layers: 6
+  d_model: 256
+  prenorm: true
+  norm: batch
+  layer:
+    dropout: 0.1
+    state_size: 4
+    trunc_len: ${dataset.l_max}
+    bidirectional: true
+    num_a: 1
+    activation: gelu
+    lr: 0.001
+    wd: 0.0
+
+dataset:
+  l_max: 4096
+  level: char
+
+loader:
+  batch_size: 16
+
+optimizer:
+  lr: 0.005
+  weight_decay: 0.05
+
+scheduler:
+  num_training_steps: 50000
+  num_warmup_steps: 5000
+
+trainer:
+  max_epochs: 32
+
+train:
+  seed: 3333
+
+wandb:
+  group: rtf

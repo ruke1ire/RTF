@@ -1,0 +1,35 @@
+# @package _global_
+defaults:
+  - /pipeline: sc
+  - /model: rtf
+  - override /scheduler: cosine_warmup
+
+model:
+  dropout: 0.0
+  n_layers: 6
+  prenorm: true
+  d_model: 128
+  norm: batch
+  layer:
+    state_size: 64
+    bidirectional: true
+    num_a: 2
+    lr: 0.001
+    wd: 0.0
+
+optimizer:
+  lr: 0.01
+  weight_decay: 0.05
+
+loader:
+  batch_size: 16
+
+trainer:
+  max_epochs: 40
+
+scheduler:
+  num_training_steps: 200000
+
+train:
+  seed: 2222
+

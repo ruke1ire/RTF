@@ -1,0 +1,24 @@
+_name_: hyena
+l_max: 1024
+order: 2
+#filter_order: 64
+num_heads: 1
+inner_factor: 1
+num_blocks: 1
+fused_bias_fc: false
+outer_mixing: false
+dropout: 0.25
+filter_dropout: 0.0
+filter_cls: rtf
+filter_args:
+  state_size: 64
+  trunc_len: ${..l_max} # Grab dataset length if exists, otherwise set to 1 and kernel will automatically resize
+  num_a: null
+  init: zeros
+  transposed: false
+  lr: 0.001
+  fused_fft_conv: True
+post_order_ffn: false
+jit_filter: false
+short_filter_order: 3
+activation: "id"

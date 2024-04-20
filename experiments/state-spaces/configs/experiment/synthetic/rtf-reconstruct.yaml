@@ -1,0 +1,35 @@
+# @package _global_
+defaults:
+  - /pipeline: reconstruct
+  - /model: rtf
+
+model:
+  dropout: 0.0
+  n_layers: 1
+  d_model: 256
+  prenorm: true
+  norm: null
+  residual: null
+  layer:
+    order: 1024
+    trunc_len: 4000
+    bidirectional: false
+    num_a: 1
+    init: zeros
+    lr: 0.001
+    wd: 0.0
+    activation: null
+    final_act: null
+
+loader:
+  batch_size: 64
+
+optimizer:
+  lr: 0.001
+  weight_decay: 0.0
+
+trainer:
+  max_epochs: 20
+
+train:
+  seed: 1112

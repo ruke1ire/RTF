@@ -1,0 +1,35 @@
+# @package _global_
+defaults:
+  - /pipeline: wt103
+  - override /scheduler: cosine_warmup_timm
+
+trainer:
+  accelerator: gpu
+  devices: 8
+  num_nodes: 1
+  accumulate_grad_batches: ${div_up:${train.global_batch_size}, ${eval:${trainer.devices} * ${dataset.batch_size} * ${trainer.num_nodes}}}
+  max_epochs: 100
+  precision: 16
+  gradient_clip_val: 1.0
+  strategy: null
+
+dataset:
+  # batch_size: 32  # Per GPU
+  batch_size: ${eval:"8 if ${train.gpu_mem} <= 16 else (16 if ${train.gpu_mem} <= 24 else 32)"}
+  max_length: 1024
+
+scheduler:
+  t_in_epochs: False
+  t_initial: ${eval:${div_up:${dataset.__train_len}, ${train.global_batch_size}} * ${trainer.max_epochs}}
+  warmup_lr_init: 1e-6
+  warmup_t: ${eval:${div_up:${dataset.__train_len}, ${train.global_batch_size}} * ${trainer.max_epochs} * 0.01}
+  lr_min: ${eval:0.1 * ${optimizer.lr}}
+
+optimizer:
+  lr: 0.001
+  weight_decay: 0.25
+
+train:
+  gpu_mem: ${eval:"round(float(__import__('subprocess').check_output('nvidia-smi -i 0 --query-gpu=memory.total --format=csv,noheader,nounits', shell=True).strip().decode()) / 1000)"}
+  seed: 2222
+  global_batch_size: 128
