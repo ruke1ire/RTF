@@ -1,5 +1,7 @@
 # RTF
-This repository contains the official implementation of RTF state-space model.
+This repository contains the official implementation of the rational transfer function (RTF) parametrization for state-space layers.
+
+![image](https://github.com/ruke1ire/RTF/assets/34561392/d090f410-b78e-4594-8a55-2d4759071489)
 
 ## Repository Structure
 
