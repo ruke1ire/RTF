@@ -4,6 +4,7 @@ from einops import rearrange, repeat
 import math
 from torch.nn.functional import pad
 from torch.fft import rfft, irfft
+from functools import partial
 try:
     from flashfftconv import FlashFFTConv
     imported_flash_fft_conv = True
@@ -23,6 +24,7 @@ class RTF(nn.Module):
         bidirectional: bool = False,
         flash_fft_conv: bool = False,
         init: str = 'zeros',
+        constraint: str = 'no',
     ):
         """
         Args:
@@ -54,6 +56,17 @@ class RTF(nn.Module):
         self.h_0 = nn.Parameter(torch.randn((1+bidirectional)*self.D)) # h_0 parameter
         self.a_channels = (1+bidirectional)*self.num_a
 
+        self.constraint_flag = False
+        if constraint is None:
+            constraint = "no"
+        a_constraint = globals()[constraint+"_constraint"]
+        if constraint in ["l1_montel"]:
+            self.scalar = torch.nn.Parameter(torch.rand(self.num_a))
+            self.a_constraint = partial(a_constraint, scalar=self.scalar)
+            self.constraint_flag = True
+        else:
+            self.a_constraint = a_constraint
+
         self.dropout = torch.nn.Dropout(dropout)
 
         if flash_fft_conv and imported_flash_fft_conv:
@@ -61,12 +74,18 @@ class RTF(nn.Module):
         else:
             self.flash_fft_conv = None
         
-    def get_k(self, L):
+    def get_k(self, L=None):
         """
         RTF kernel generation algorithm.
         """
+        if L is None:
+            L = self.L
         assert L <= self.L
-        ab = pad(self.ab, (1, self.L-self.N-1+self.L%2))# zero padding params. +self.L%2 is rFFT specific
+        if self.constraint_flag:
+            ab = torch.cat((self.a, self.ab[self.a_channels:]), dim = 0)
+        else:
+            ab = self.ab
+        ab = pad(ab, (1, self.L-self.N-1+self.L%2))# zero padding params. +self.L%2 is rFFT specific
         ab[:self.a_channels,0] = 1.0 # setting the monic term
         AB = rfft(ab,dim=-1) # polynomial evaluation on points of unity
         K = AB[self.a_channels:]/repeat(AB[:self.a_channels], "D N -> (D R) N", R=self.D//self.num_a) + self.h_0[:,None] # get kernel spectrum
@@ -82,7 +101,7 @@ class RTF(nn.Module):
         l = u.size(-2)
         k = self.dropout(self.get_k(l))
         self.k = k
-        # below this is identical to s4/s4d
+        # below this is functionally identical to s4/s4d
         if self.flash_fft_conv is not None: 
             if self.bdir:
                 raise NotImplementedError("Strange behavior with FlashFFTConv, not allowing non-causal convolutions.")
@@ -106,26 +125,46 @@ class RTF(nn.Module):
         
     def step(self, u, x_i):
         assert self.bdir == False
-        c = self.get_c() # c can be cached 
-        a = repeat(self.ab[:self.a_channels], "D N -> (D R) N", R=self.D//self.num_a) # repeated a can be cached
+        c = self.get_C() # c can be cached 
+        a = repeat(self.a, "D N -> (D R) N", R=self.D//self.num_a) # repeated a can be cached
         y = torch.einsum("BNC,CN->BC", x_i, c) + self.h_0*u
         x_f = torch.roll(x_i, 1, 1)
         x_f[:,0] = torch.einsum("CN,BNC->BC",-a,x_i) + u
         return y, x_f
 
     @torch.no_grad()
-    def get_c(self):
+    def get_C(self):
+        """
+        returns the corrected C matrix (AKA the numerator "b", for RTF)
+        """
         assert self.bdir == False
         device = self.ab.device
         N = self.N
         A = torch.roll(torch.eye(self.N, device=device),1,0)
         A = torch.clone(repeat(A, "N M -> C N M",C=self.num_a))
-        A[:,0] = -self.ab[:self.a_channels] # construct A matrix
+        A[:,0] = -self.a # construct A matrix
         I_AL = repeat(torch.eye(N, device=device) - torch.matrix_power(A, self.L), "C N M -> (C R) N M", R = self.D//self.num_a) # (I-A^L)
         return torch.linalg.solve(I_AL, self.ab[self.a_channels:], left=True) # solves for C in, C_prime = C(I-A^L)
         
     def x_0(self, batch_shape, device=None):
         return torch.zeros(batch_shape, self.N, self.D, device=device)
+    
+    def get_k_step(self):
+        """
+        Get the conv kernel recurrently. Used mainly for testing whether get_k() corresponds with get_k_step() or not.
+        """
+        u = torch.zeros(1, self.L, self.D, device=self.ab.device)
+        u[0,0] = 1.0
+        x = self.x_0(1, device=self.ab.device)
+        k = []
+        for i in range(self.L):
+            k_, x = self.step(u[0:1, i], x)
+            k.append(k_)
+        return torch.cat(k, dim = -2).permute(1,0)
+    
+    @property
+    def a(self):
+        return self.a_constraint(self.ab[:self.a_channels])
 
 def zeros_init(channels, order):
     return torch.zeros(channels, order)
@@ -137,3 +176,9 @@ def xavier_init(channels, order): # xavier init can sometimes initialize an unst
 def montel_init(channels, order):
     stdv = 1. / order
     return torch.FloatTensor(channels, order).uniform_(-stdv, stdv)
+
+def no_constraint(coefs, **kwargs):
+    return coefs
+
+def l1_montel_constraint(coefs, scalar, **kwargs):
+    return coefs/(torch.sum(coefs.abs(), dim = -1) + scalar.abs() + 1e-6)[:,None]

@@ -14,10 +14,11 @@ filter_args:
   state_size: 64
   trunc_len: ${..l_max} # Grab dataset length if exists, otherwise set to 1 and kernel will automatically resize
   num_a: null
-  init: zeros
+  init: xavier
   transposed: false
   lr: 0.001
   fused_fft_conv: True
+  constraint: l1_montel
 post_order_ffn: false
 jit_filter: false
 short_filter_order: 3

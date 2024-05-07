@@ -16,11 +16,12 @@ class RTF(RTF_, OptimModule): # RTF integration into Hyena operator
         bidirectional: bool=False,
         fused_fft_conv: bool=False,
         init: str='zeros',
+        constraint='no',
         transposed: bool=False,
         lr: float=0.001,
         wd: float=0.0,
         **kwargs):
-        super().__init__(d_model=d_model, state_size=state_size, trunc_len=trunc_len, num_a=num_a, dropout=dropout, bidirectional=bidirectional, flash_fft_conv=False, init=init)
+        super().__init__(d_model=d_model, state_size=state_size, trunc_len=trunc_len, num_a=num_a, dropout=dropout, bidirectional=bidirectional, flash_fft_conv=False, init=init, constraint=constraint)
         if transposed:
             raise NotImplementedError()
         

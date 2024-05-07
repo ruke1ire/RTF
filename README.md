@@ -32,10 +32,17 @@ import torch
 
 seq_len = 1024
 d_model = 32
+init = "xavier" # Other options: "zeros" (default), "montel"
+constraint = "l1_montel" # Other options: "no"|None (default)
 batch_size = 1
 input = torch.rand(batch_size, seq_len, d_model)
 
-model = RTF(d_model=d_model, state_size=128, trunc_len=seq_len)
+model = RTF(
+	d_model=d_model, 
+	state_size=128, 
+	trunc_len=seq_len, 
+	init=init, 
+	constraint=constraint)
 
 output = model(input)
 print(output.shape)
