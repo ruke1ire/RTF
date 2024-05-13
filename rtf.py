@@ -36,6 +36,7 @@ class RTF(nn.Module):
             - bidirectional: If set True, will process input signals with both a causal and an anti-causal SSM.
             - flash_fft_conv: If set True, will use FlashFFTConv.
             - init: Initialization function's name. (zeros, xavier, montel)
+            - constraint: Denominator constraint (to keep poles within unit circle). (no, l1_montel)
         """
         super().__init__()
 
