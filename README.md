@@ -1,5 +1,5 @@
 # RTF
-This repository contains the official implementation of the rational transfer function (RTF) parametrization for state-space layers.
+This repository contains the official implementation of the [rational transfer function (RTF) parametrization for state-space layers](https://arxiv.org/abs/2405.06147).
 
 ![image](https://github.com/ruke1ire/RTF/assets/34561392/d090f410-b78e-4594-8a55-2d4759071489)
 
@@ -47,4 +47,17 @@ model = RTF(
 output = model(input)
 print(output.shape)
 >>> torch.Size([1, 1024, 32])
+```
+
+## Citation
+
+You can cite our work with:
+
+```
+@article{parnichkun2024statefree,
+  title={State-Free Inference of State-Space Models: The Transfer Function Approach}, 
+  author={Rom N. Parnichkun and Stefano Massaroli and Alessandro Moro and Jimmy T. H. Smith and Ramin Hasani and Mathias Lechner and Qi An and Christopher Ré and Hajime Asama and Stefano Ermon and Taiji Suzuki and Atsushi Yamashita and Michael Poli},
+  journal={International Conference on Machine Learning},
+  year={2024}
+}
 ```
