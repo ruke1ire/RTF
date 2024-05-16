@@ -61,3 +61,7 @@ You can cite our work with:
   year={2024}
 }
 ```
+
+## Coming soon
+1. python notebook explaining the inner workings of RTF.
+2. RTF2: Same as RTF but does the C correction on the conv form instead of the recurrent form (similar to S4/S4D repo). This will be slower to train but conv mode -> recurrent mode conversion/correction is more robust for both stable and unstable systems.
