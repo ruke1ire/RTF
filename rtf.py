@@ -124,10 +124,13 @@ class RTF(nn.Module):
                 y = irfft(Y, dim=-2, n=2*l-l%2)[:,:l]
         return y
         
-    def step(self, u, x_i):
+    def step(self, u, x_i, correct_C=True):
         assert self.bdir == False
-        c = self.get_C() # c can be cached 
-        a = repeat(self.a, "D N -> (D R) N", R=self.D//self.num_a) # repeated a can be cached
+        if correct_C:
+            c = self.get_C() # c can be cached 
+        else:
+            c = self.ab[self.a_channels:]
+        a = repeat(self.a, "D N -> (D R) N", R=self.D//self.num_a).detach() # repeated a can be cached
         y = torch.einsum("BNC,CN->BC", x_i, c) + self.h_0*u
         x_f = torch.roll(x_i, 1, 1)
         x_f[:,0] = torch.einsum("CN,BNC->BC",-a,x_i) + u
@@ -150,7 +153,7 @@ class RTF(nn.Module):
     def x_0(self, batch_shape, device=None):
         return torch.zeros(batch_shape, self.N, self.D, device=device)
     
-    def get_k_step(self):
+    def get_k_step(self, correct_C=True):
         """
         Get the conv kernel recurrently. Used mainly for testing whether get_k() corresponds with get_k_step() or not.
         """
@@ -159,7 +162,7 @@ class RTF(nn.Module):
         x = self.x_0(1, device=self.ab.device)
         k = []
         for i in range(self.L):
-            k_, x = self.step(u[0:1, i], x)
+            k_, x = self.step(u[0:1, i], x, correct_C=correct_C)
             k.append(k_)
         return torch.cat(k, dim = -2).permute(1,0)
     
